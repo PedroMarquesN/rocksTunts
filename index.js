@@ -66,7 +66,7 @@ async function updateResults(auth, spreadsheetId, row, situation, naf) {
 
 
 
-app.get("/get-rowss", async (req, res) => {
+app.get("/get-rows", async (req, res) => {
     const { googleSheets, auth, spreadsheetId, classes } = await getAuthSheets();
   
     const getRows = await googleSheets.spreadsheets.values.get({
