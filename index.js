@@ -7,7 +7,7 @@ const app = express();
 
 async function getAuthSheets(){
     const auth = new google.auth.GoogleAuth({
-        keyFile:"crendials.json",
+        keyFile:"credentials.json",
         scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     });
 
@@ -61,7 +61,36 @@ async function updateResults(auth, spreadsheetId, row, situation, naf) {
     } catch (err) {
       console.error(`Error updating results for row ${row + 4}:`, err);
     }
-  }
+}
+
+
+
+
+app.get("/get-rowss", async (req, res) => {
+    const { googleSheets, auth, spreadsheetId, classes } = await getAuthSheets();
+  
+    const getRows = await googleSheets.spreadsheets.values.get({
+      auth,
+      spreadsheetId,
+      range: "engenharia_de_software!A4:H",
+    });
+  
+    getRows.data.values.forEach(async (row, index) => {
+      const p1 = parseInt(row[3]);
+      const p2 = parseInt(row[4]);
+      const p3 = parseInt(row[5]);
+      const faltas = parseInt(row[2]);
+      
+      const result = calculateStudentSituation(p1, p2, p3, faltas, classes);
+  
+      console.log(`Situação para ${row[1]}: ${result.situation}, NAF: ${result.naf}`);
+  
+      // Atualizar os resultados na planilha
+      await updateResults(auth, spreadsheetId, index, result.situation, result.naf);
+    });
+  
+    res.send(getRows.data);
+});
 
 
 
