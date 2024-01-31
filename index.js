@@ -63,7 +63,22 @@ async function updateResults(auth, spreadsheetId, row, situation, naf) {
     }
 }
 
+function calculateStudentSituation(p1, p2, p3, faltas, classes) {
+  const media = (p1 + p2 + p3) / 3; 
 
+  if (faltas > 0.25 * classes) {
+      return { situation: 'Reprovado por Falta', naf: 0 };
+  } else {
+      if (media < 50) {
+          return { situation: 'Reprovado por Nota', naf: 0 };
+      } else if (media >= 50 && media < 70) {
+          const naf = Math.ceil((media + 70) / 2);
+          return { situation: 'Exame Final', naf };
+      } else {
+          return { situation: 'Aprovado', naf: 0 };
+      }
+  }
+}
 
 
 app.get("/get-rows", async (req, res) => {
