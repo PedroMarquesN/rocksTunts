@@ -85,7 +85,7 @@ app.get("/get-rows", async (req, res) => {
   
       console.log(`Situação para ${row[1]}: ${result.situation}, NAF: ${result.naf}`);
   
-      // Atualizar os resultados na planilha
+      
       await updateResults(auth, spreadsheetId, index, result.situation, result.naf);
     });
   
